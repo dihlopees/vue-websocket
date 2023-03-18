@@ -1,17 +1,29 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <img alt="Vue logo" src="./assets/logo.png" />
+  <button @click="sendMessage()">Send mess</button>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import { io } from 'socket.io-client';
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  setup() {
+    var socket = io('http://localhost:3000');
+
+    socket.on('connect', () => {
+      console.log(`connected with id: ${socket.id}`);
+    });
+
+    socket.on('receive-mess', (message) => {
+      console.log(`mensagem recebida ${message}`);
+    });
+
+    const sendMessage = () => {
+      socket.emit('custom-event', 10222, 'saazasdasdasdsa');
+    };
+    return { socket, sendMessage };
+  },
+};
 </script>
 
 <style>
